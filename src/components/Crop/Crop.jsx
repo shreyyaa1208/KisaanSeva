@@ -25,7 +25,7 @@ const Crop = () => {
     }));
   };
 
-  const API_BASE = process.env.REACT_APP_BACKEND_URL;
+  const API_BASE = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
   const handleSubmit = async () => {
     const data = {
