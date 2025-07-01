@@ -13,7 +13,10 @@ console.log("HF token:", process.env.HF_API_TOKEN?.slice(0, 8) + "…");
 console.log("🤖 Chatbot ID:", process.env.CHATBASE_BOT_ID);
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:3000", "https://kisaan-seva.vercel.app"]
+}));
+
 app.use(express.json());
 
 // ✅ Mount disease prediction route
