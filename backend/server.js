@@ -14,7 +14,13 @@ console.log("🤖 Chatbot ID:", process.env.CHATBASE_BOT_ID);
 
 const app = express();
 app.use(cors({
-    origin: ["http://localhost:3000", "https://kisaan-seva.vercel.app"]
+    origin: [
+        "http://localhost:3000",
+        "https://kisaan-seva.vercel.app",
+        "https://kisaan-seva-6rbl1w0tn-shreyyaa1208s-projects.vercel.app"
+    ],
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true
 }));
 
 app.use(express.json());
