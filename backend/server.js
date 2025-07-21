@@ -1,16 +1,13 @@
-import fetch from "node-fetch";
+// backend/server.js
 
+import fetch from "node-fetch";
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import { Client } from "@gradio/client";
 import diseaseRoutes from "./disease.js";
 
-
 dotenv.config({ path: "./backend/.env" });
-console.log("HF token:", process.env.HF_API_TOKEN?.slice(0, 8) + "…");
-
-console.log("🤖 Chatbot ID:", process.env.CHATBASE_BOT_ID);
 
 const app = express();
 app.use(cors({
@@ -25,19 +22,15 @@ app.use(cors({
 
 app.use(express.json());
 
-
+// Mount disease prediction route
 app.use("/api", diseaseRoutes);
 
-// 🔹 Fertilizer Prediction Endpoint
-app.post("/predict-fertilizer", async (req, res) => {
+// Fertilizer Prediction Endpoint
+app.post("/api/predict-fertilizer", async (req, res) => {
     const { temp, humidity, moisture, soil, crop, N, P, K } = req.body;
-    console.log("HF API Token exists:", !!process.env.HF_API_TOKEN);
 
     try {
-        const client = await Client.connect("Trisita/crop_and_fertilizer_recommendation_system", {
-            hf_token: process.env.HF_API_TOKEN
-        });
-
+        const client = await Client.connect("Trisita/crop_and_fertilizer_recommendation_system");
         const result = await client.predict("/predict_1", {
             temp: Number(temp),
             humidity: Number(humidity),
@@ -52,17 +45,14 @@ app.post("/predict-fertilizer", async (req, res) => {
         console.log("Fertilizer Result:", result);
         res.json({ prediction: result.data[0] });
     } catch (error) {
-        console.error("Crop prediction error:", error.message);
-        if (error.response) {
-            console.error("🔴 Hugging Face API response:", await error.response.text());
-        }
-        res.status(500).json({ error: "Crop prediction failed" });
+        console.error("Fertilizer prediction error:", error);
+        res.status(500).json({ error: "Fertilizer prediction failed" });
     }
 });
 
-// 🔹 Crop Recommendation Endpoint
-app.post("/predict-crop", async (req, res) => {
-    console.log("📥 /predict-crop endpoint hit", req.body);
+// Crop Recommendation Endpoint
+app.post("/api/predict-crop", async (req, res) => {
+    console.log("📥 /api/predict-crop endpoint hit", req.body);
 
     const { temp, humidity, ph, rainfall, N, P, K } = req.body;
 
@@ -86,8 +76,8 @@ app.post("/predict-crop", async (req, res) => {
     }
 });
 
-// 🔹 Chatbase chatbot route
-app.post("/chatbase", async (req, res) => {
+// Chatbase chatbot route
+app.post("/api/chatbase", async (req, res) => {
     const { message } = req.body;
 
     try {
@@ -113,26 +103,12 @@ app.post("/chatbase", async (req, res) => {
     }
 });
 
-app.get("/chatbase-test", (req, res) => {
+app.get("/api/chatbase-test", (req, res) => {
     res.send("Chatbase route is reachable ✅");
 });
 
-const PORT = process.env.PORT || 5001;
-if (process.env.NODE_ENV !== "production") {
-    app.listen(PORT, () => {
-        console.log(`🚀 Local server running at http://localhost:${PORT}`);
-    });
-}
-
-
-
-
-
-
-app.get("/", (req, res) => {
-    res.send("✅ KisaanSeva backend is running locally!");
+app.get("/api", (req, res) => {
+    res.send("✅ KisaanSeva backend is running!");
 });
 
-
 export default app;
-
