@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import { Client } from "@gradio/client";
-import diseaseRoutes from "./disease.js"; // ✅ Import router
+import diseaseRoutes from "./disease.js";
 
 
 dotenv.config({ path: "./backend/.env" });
@@ -25,15 +25,19 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ Mount disease prediction route
+
 app.use("/api", diseaseRoutes);
 
 // 🔹 Fertilizer Prediction Endpoint
 app.post("/predict-fertilizer", async (req, res) => {
     const { temp, humidity, moisture, soil, crop, N, P, K } = req.body;
+    console.log("HF API Token exists:", !!process.env.HF_API_TOKEN);
 
     try {
-        const client = await Client.connect("Trisita/crop_and_fertilizer_recommendation_system");
+        const client = await Client.connect("Trisita/crop_and_fertilizer_recommendation_system", {
+            hf_token: process.env.HF_API_TOKEN
+        });
+
         const result = await client.predict("/predict_1", {
             temp: Number(temp),
             humidity: Number(humidity),
@@ -48,8 +52,11 @@ app.post("/predict-fertilizer", async (req, res) => {
         console.log("Fertilizer Result:", result);
         res.json({ prediction: result.data[0] });
     } catch (error) {
-        console.error("Fertilizer prediction error:", error);
-        res.status(500).json({ error: "Fertilizer prediction failed" });
+        console.error("Crop prediction error:", error.message);
+        if (error.response) {
+            console.error("🔴 Hugging Face API response:", await error.response.text());
+        }
+        res.status(500).json({ error: "Crop prediction failed" });
     }
 });
 
@@ -110,12 +117,16 @@ app.get("/chatbase-test", (req, res) => {
     res.send("Chatbase route is reachable ✅");
 });
 
+const PORT = process.env.PORT || 5001;
 if (process.env.NODE_ENV !== "production") {
-    const PORT = process.env.PORT || 5001;
     app.listen(PORT, () => {
-        console.log(`🚀 Server running at http://localhost:${PORT}`);
+        console.log(`🚀 Local server running at http://localhost:${PORT}`);
     });
 }
+
+
+
+
 
 
 app.get("/", (req, res) => {
