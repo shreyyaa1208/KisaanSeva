@@ -110,12 +110,12 @@ app.get("/chatbase-test", (req, res) => {
     res.send("Chatbase route is reachable ✅");
 });
 
-if (process.env.NODE_ENV !== "production") {
-    const PORT = process.env.PORT || 5001;
-    app.listen(PORT, () => {
-        console.log(`🚀 Server running at http://localhost:${PORT}`);
-    });
-}
+// if (process.env.NODE_ENV !== "production") {
+//     const PORT = process.env.PORT || 5001;
+//     app.listen(PORT, () => {
+//         console.log(`🚀 Server running at http://localhost:${PORT}`);
+//     });
+// }
 
 
 app.get("/", (req, res) => {
