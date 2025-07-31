@@ -10,15 +10,27 @@ import diseaseRoutes from "./disease.js";
 dotenv.config({ path: "./backend/.env" });
 
 const app = express();
-app.use(cors({
-    origin: [
-        "http://localhost:3000",
-        "https://kisaan-seva.vercel.app",
-        "https://kisaan-seva-6rbl1w0tn-shreyyaa1208s-projects.vercel.app"
-    ],
+const allowedOrigins = [
+    "http://localhost:3000",
+    "https://kisaan-seva.vercel.app",
+    "https://kisaan-seva-6rbl1w0tn-shreyyaa1208s-projects.vercel.app"
+];
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ["GET", "POST", "OPTIONS"],
     credentials: true
-}));
+};
+
+app.use(cors(corsOptions));
+
+// This will handle the preflight requests
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
