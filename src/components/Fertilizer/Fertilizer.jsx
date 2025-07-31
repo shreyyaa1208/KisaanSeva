@@ -55,13 +55,16 @@ const FertilizerDashboard = () => {
   const predictFertilizer = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/predict-fertilizer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/predict-fertilizer",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await response.json();
       setPrediction(data.prediction);
