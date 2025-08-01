@@ -24,10 +24,7 @@ const Crop = () => {
       [name]: value,
     }));
   };
-
-  const API_BASE = (
-    process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"
-  ).replace(/\/$/, "");
+  const API_BASE = "https://kisaan-seva-backend.vercel.app";
 
   const handleSubmit = async () => {
     const data = {
@@ -41,7 +38,7 @@ const Crop = () => {
     };
 
     try {
-      const response = await fetch(`${API_BASE}/predict-crop`, {
+      const response = await fetch(`${API_BASE}/api/predict-crop`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
